@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SwUpdate } from '@angular/service-worker';
+import { SwPush, SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-root',
@@ -10,8 +10,25 @@ import { SwUpdate } from '@angular/service-worker';
 export class AppComponent {
   title = 'coffeelog';
 
-  constructor(private snackBar: MatSnackBar, private swUpdate: SwUpdate) {
+  constructor(private snackBar: MatSnackBar, 
+              private swUpdate: SwUpdate,
+              private swPush: SwPush) {
 
+  }
+
+  registerForPush(){
+    if(this.swPush.isEnabled){
+      Notification.requestPermission(permission => {
+        if(permission == 'granted'){
+          this.swPush.requestSubscription({
+            serverPublicKey: "BG-LYXWZTwfDIOI093l8WkMMifGVHAtK91D5L4tk8D0GtGYLRZ0WkSEOY0noOLPRWYTZU9PT-QbNhI7m6ZFYYk8"
+          }).then(registration => {
+            console.log(registration)
+          })
+        }
+      })
+      
+    }
   }
 
   updateNetworkStatusUI() {
